@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Caiste</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            border: 0;
+            -webkit-tap-highlight-color: transparent;
+            text-decoration: none;
+            color: inherit;
+            box-sizing: border-box;
+        }
+
+        *:focus {
+            outline: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f79d65;
+            font-family: 'Bungee', cursive;
+            user-select: none;
+        }
+
+        .message {
+            width: 150px;
+            height: 150px;
+            border-radius: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            transition: all 0.4s ease;
+        }
+
+        .message.clicked {
+            background-color: #ff6b6b;
+            border-radius: 0;
+            width: 100%;
+            height: 100vh;
+            transition: all 1s ease;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        }
+
+        .message.clicked:hover {
+            transform: none;
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        }
+
+        .message.clicked .message__btn {
+            display: none;
+        }
+
+        .message.clicked .message__text {
+            opacity: 1;
+            visibility: visible;
+            animation: text 0.6s 1s ease both;
+        }
+
+        @keyframes text {
+            0% {
+                opacity: 0;
+                transform: translateY(80px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+        }
+
+        .message__btn {
+            background-color: #ff6b6b;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.55, 0.41, 0.37, 1.41);
+            cursor: pointer;
+            font-family: 'Bungee', cursive;
+            color: white;
+            letter-spacing: 2px;
+            z-index: 2;
+            border: 2px solid #cc444b;
+            box-shadow: 0px 8px 0px -2px #e63946, 0px 8px 0px 0px #cc444b;
+        }
+
+        .message__btn:hover {
+            transform: translateY(3px);
+            box-shadow: 0px 0px 0px -2px #e63946, 0px 0px 0px 0px #cc444b;
+        }
+
+        .message__text {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            display: flex;
+            z-index: 1;
+        }
+
+        .message__letters {
+            font-size: 80px;
+            padding: 10px;
+            margin: 0 -5px;
+            text-transform: uppercase;
+            position: relative;
+            -webkit-text-stroke: 2px #cc444b;
+            animation: letters 1s ease infinite alternate both;
+        }
+
+        @keyframes letters {
+            0% {
+                transform: translateY(20px);
+            }
+
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .message__letters:hover .message__letterMain {
+            transform: translateY(-20px);
+            transition: all 0.4s ease, transform 0.4s ease;
+        }
+
+        .message__letters:hover .message__letterShadow {
+            transform: translateY(-30px);
+            filter: blur(10px);
+            transition: all 0.4s ease, transform 0.4s ease;
+        }
+
+        .message__letterMain {
+            position: relative;
+            user-select: none;
+            z-index: 1;
+            transition: all 0.4s ease, transform 2s 0.4s ease;
+        }
+
+        .message__letterShadow {
+            position: absolute;
+            left: 10px;
+            top: 20px;
+            color: #e63946;
+            transition: all 0.4s ease, transform 2s 0.4s ease;
+        }
+
+        .reload {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+            border-radius: 40px;
+            background-color: #f27059;
+            width: 100px;
+            height: 40px;
+            font-family: 'Bungee', cursive;
+            color: white;
+            font-size: 10px;
+            letter-spacing: 2px;
+            border: 2px solid #cc444b;
+            box-shadow: 0px 6px 0px -2px #e63946, 0px 6px 0px 0px #cc444b;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: none;
+        }
+
+        .reload:focus,
+        .reload:hover {
+            transform: translateY(3px);
+            box-shadow: 0px 0px 0px -2px #e63946, 0px 0px 0px 0px #cc444b;
+        }
+
+        canvas {
+            display: block;
+            vertical-align: bottom;
+            z-index: -1;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+            transform: scale(0);
+            transition: all 0.4s ease;
+        }
+
+        #particles-js.show {
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .message__image {
+            max-width: 300px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    color: #ff6b6b;
+}
+    </style>
+</head>
+
+<body>
+    <div class="message">
+        <button class="message__btn">click me</button>
+        <div class="message__text">
+            
+            <!-- Agregar más letras si es necesario -->
+            <img src="img/Que-locura-trans-logo.jpg" alt="Imagen personalizada" class="message__image">
+        </div>
+        
+    </div>
+    <button class="reload">reload</button>
+    <div id="particles-js"></div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        function message() {
+            const message = "DIOS CAISTE" ,
+                messageText = document.querySelectorAll(".message__text"),
+                messageSplit = message.split(""),
+                messageContainer = document.querySelector(".message"),
+                messageBtn = document.querySelector(".message__btn"),
+                reloadBtn = document.querySelector(".reload"),
+                particlesContainer = document.getElementById("particles-js");
+            const colors = ["#f7b267", "#f79d65", "#f4845f", "#f27059", "#f25c54"];
+            let i = 0;
+            messageBtn.addEventListener("click", openMessage);
+            reloadBtn.addEventListener("click", openMessage);
+
+            function openMessage() {
+                if (messageContainer.classList.contains("clicked")) {
+                    messageContainer.classList.remove("clicked");
+                    reloadBtn.style.display = "none";
+                    particlesContainer.classList.remove("show");
+                } else {
+                    messageContainer.classList.add("clicked");
+                    reloadBtn.style.display = "block";
+                    setTimeout(() => {
+                        particlesContainer.classList.add("show");
+                    }, 1000);
+                }
+            }
+
+            messageSplit.forEach(function (el) {
+                let template = `
+                    <p class="message__letters">
+                        <span class="message__letterMain">${el}</span>
+                        <span class="message__letterShadow">${el}</span>
+                    </p>`;
+                messageText.forEach(function (el) {
+                    el.insertAdjacentHTML("beforeend", template);
+                });
+            });
+
+            const letterMain = document.querySelectorAll(".message__letterMain");
+            letterMain.forEach(function (el) {
+                if (i == colors.length) i = 0
+                el.style.color = colors[i];
+                i++;
+            });
+        }
+
+        message();
+
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#f79d65"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    },
+                    image: {
+                        src: "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js",
+                        width: 100,
+                        height: 100
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#f7b267",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    }
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+
+    <footer>
+        &copy; <span id="currentYear"></span> Designed by <a href="https://ypprogrammer.com/" target="_blank">
+            <img style="width: 85px;" src="img/YP_logo_blanco.png" alt="Yefferson Perez developer "></a>
+    </footer>
+
+</body>
+
+
+</html>
